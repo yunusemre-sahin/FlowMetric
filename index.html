@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="tr" id="html-root">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- SEO -->
+  <title>FlowMetric — Universal Unit Converter / Evrensel Birim Dönüştürücü</title>
+  <meta name="description" content="FlowMetric ile sıcaklık, uzunluk, ağırlık, veri, enerji ve basınç birimlerini anında dönüştürün. Convert temperature, length, weight, data, energy and pressure units instantly.">
+  <meta name="keywords" content="birim dönüştürücü, unit converter, temperature, length, weight, data, energy, pressure, FlowMetric">
+  <meta name="author" content="FlowMetric">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="FlowMetric — Evrensel Birim Dönüştürücü">
+  <meta property="og:description" content="6 kategori, 40+ birim. Akıllı analitik, favori kaydetme ve anlık dönüşüm.">
+  <meta property="og:type" content="website">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- ── Arka plan efektleri ── -->
+  <div class="fm-orb fm-orb-1" aria-hidden="true"></div>
+  <div class="fm-orb fm-orb-2" aria-hidden="true"></div>
+  <div class="fm-orb fm-orb-3" aria-hidden="true"></div>
+  <canvas id="fm-canvas" aria-hidden="true"></canvas>
+
+  <!-- ── Toast bildirimi ── -->
+  <div class="fm-toast" id="fm-toast" role="alert" aria-live="polite"></div>
+
+  <!-- ── Ana içerik ── -->
+  <!-- ── Dil toggle (sağ üst) ── -->
+  <div class="fm-lang-toggle" id="fm-lang-toggle" aria-label="Language selector">
+    <button class="fm-lang-btn active" id="lang-tr" onclick="setLanguage('tr')" aria-pressed="true" aria-label="Türkçe">TR</button>
+    <span class="fm-lang-sep" aria-hidden="true">|</span>
+    <button class="fm-lang-btn" id="lang-en" onclick="setLanguage('en')" aria-pressed="false" aria-label="English">EN</button>
+  </div>
+
+  <div class="fm-wrapper">
+
+    <!-- Header -->
+    <header class="fm-header">
+      <div class="fm-logo-badge">
+        <span class="fm-dot" aria-hidden="true"></span>
+        FlowMetric
+        <span class="fm-dot" aria-hidden="true"></span>
+      </div>
+      <h1 class="fm-title" data-i18n="title">Universal Converter</h1>
+      <p class="fm-subtitle" data-i18n="subtitle">6 kategori · 40+ birim · Akıllı analitik · Anlık dönüşüm</p>
+    </header>
+
+    <!-- Ana kart -->
+    <main class="fm-card" id="main-card">
+
+      <!-- Kategori sekmeleri -->
+      <p class="fm-label" data-i18n="selectCategory">Kategori Seç</p>
+      <div class="fm-tabs" id="fm-tabs" role="tablist" aria-label="Birim kategorileri"></div>
+
+      <!-- Birim arama -->
+      <div class="fm-search-wrap">
+        <span class="fm-search-icon" aria-hidden="true">🔍</span>
+        <input
+          type="text"
+          class="fm-search"
+          id="fm-search"
+          data-i18n-placeholder="searchPlaceholder"
+          placeholder="Birim ara… (örn: Kilometre)"
+          autocomplete="off"
+          aria-label="Birim ara"
+          spellcheck="false"
+        >
+      </div>
+
+      <!-- Dönüşüm satırı -->
+      <div class="fm-conv-row">
+
+        <!-- Kaynak -->
+        <div class="fm-input-block">
+          <label class="fm-input-label" for="from-unit" data-i18n="fromUnit">Kaynak Birim</label>
+          <div class="fm-select-wrap">
+            <select class="fm-select" id="from-unit" aria-label="Kaynak birim seç"></select>
+            <span class="fm-select-arrow" aria-hidden="true">▼</span>
+          </div>
+          <input
+            type="text"
+            class="fm-number-input"
+            id="from-value"
+            placeholder="0"
+            inputmode="decimal"
+            aria-label="Dönüştürülecek değer"
+            autocomplete="off"
+          >
+        </div>
+
+        <!-- Swap -->
+        <button class="fm-swap-btn" id="swap-btn" data-i18n-title="swapTitle" title="Birimleri Ters Çevir" aria-label="Kaynak ve hedef birimleri yer değiştir">
+          ⇄
+        </button>
+
+        <!-- Hedef -->
+        <div class="fm-input-block">
+          <label class="fm-input-label" for="to-unit" data-i18n="toUnit">Hedef Birim</label>
+          <div class="fm-select-wrap">
+            <select class="fm-select" id="to-unit" aria-label="Hedef birim seç"></select>
+            <span class="fm-select-arrow" aria-hidden="true">▼</span>
+          </div>
+          <input
+            type="text"
+            class="fm-number-input fm-result-input"
+            id="to-value"
+            placeholder="—"
+            readonly
+            aria-label="Sonuç değeri"
+          >
+        </div>
+
+      </div><!-- /fm-conv-row -->
+
+      <!-- Sonuç kartı -->
+      <div class="fm-result-card" id="result-card" aria-live="polite">
+        <p class="fm-result-label" data-i18n="result">Sonuç</p>
+        <div class="fm-result-value" id="result-value">—</div>
+        <div class="fm-result-unit"  id="result-unit"></div>
+      </div>
+
+      <!-- Analitik bilgi kartı -->
+      <div class="fm-info-card" id="info-card">
+        <span class="fm-info-icon" aria-hidden="true">💡</span>
+        <div class="fm-info-text" id="info-text" data-i18n="infoDefault">Bir değer girerek dönüşümü başlatın.</div>
+      </div>
+
+      <!-- Favoriler -->
+      <p class="fm-section-label">
+        <span data-i18n="favorites">⭐ Favoriler</span>
+        <span class="fm-label-line" aria-hidden="true"></span>
+      </p>
+      <div class="fm-favorites" id="fm-favorites" aria-label="Favori birim çiftleri"></div>
+
+      <!-- Aksiyon butonları -->
+      <div class="fm-actions">
+        <button class="fm-btn fm-btn-primary" id="copy-btn" aria-label="Sonucu panoya kopyala">
+          <span data-i18n="copyBtn">📋 Sonucu Kopyala</span>
+        </button>
+        <button class="fm-btn fm-btn-accent" id="fav-btn" aria-label="Bu dönüşümü favorilere ekle">
+          <span data-i18n="favBtn">⭐ Favoriye Ekle</span>
+        </button>
+        <button class="fm-btn fm-btn-secondary" id="reset-btn" aria-label="Formu sıfırla">
+          <span data-i18n="resetBtn">↺ Sıfırla</span>
+        </button>
+      </div>
+
+    </main><!-- /fm-card -->
+
+    <!-- Footer -->
+    <footer class="fm-footer">
+      <span>FlowMetric</span> v1.0 · <span data-i18n="footerText">6 kategori · 40+ birim · MIT Lisansı</span>
+    </footer>
+
+  </div><!-- /fm-wrapper -->
+
+  <!-- JavaScript -->
+  <script src="js/app.js"></script>
+
+</body>
+</html>
