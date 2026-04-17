@@ -25,6 +25,9 @@
 
 ---
 
+![Dashboard Ekran Görüntüsü](Photo/Wb_Screen.png)
+
+
 ## English
 
 FlowMetric is a **zero-dependency, browser-based universal unit converter** built with pure HTML, CSS, and JavaScript. It converts across 6 categories and 40+ units with real-world context cards for every result.
